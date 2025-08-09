@@ -1,17 +1,13 @@
-// src/components/Modal/Modal.tsx
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
 
-// Інтерфейс пропсів
 interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
 }
 
-// Модальне вікно
 const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
-  // Обробка Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -20,7 +16,6 @@ const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  // Обробка кліку по бекдропу
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };

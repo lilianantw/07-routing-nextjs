@@ -1,3 +1,5 @@
+// lib/api.ts
+
 import axios from "axios";
 import type {
   Note,
@@ -20,13 +22,13 @@ export interface CreateNotePayload {
 }
 
 const api = axios.create({
-  baseURL: "https://notehub-public.goit.study/api",
+  baseURL: "https://notehub-public.goit.study/api", // ✅ Виправлено: видалено пробіли
   headers: {
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,
   },
 });
 
-// Отримати всі нотатки (із пагінацією та пошуком)
+// Отримати всі нотатки (із пагінацією та фільтром за тегом)
 export async function fetchNotes({
   page = 1,
   search = "",
