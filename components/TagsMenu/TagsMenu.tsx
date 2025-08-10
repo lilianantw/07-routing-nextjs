@@ -2,9 +2,12 @@ import css from "./TagsMenu.module.css";
 import Link from "next/link";
 
 const tags = [
+  { name: "All", slug: "All" },
+  { name: "Todo", slug: "Todo" },
   { name: "Work", slug: "Work" },
   { name: "Personal", slug: "Personal" },
-  { name: "Urgent", slug: "Urgent" },
+  { name: "Meeting", slug: "Meeting" },
+  { name: "Shopping", slug: "Shopping" },
 ];
 
 export default function TagsMenu() {
