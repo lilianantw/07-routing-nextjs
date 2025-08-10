@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { ReactNode } from "react";
 import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -22,6 +21,7 @@ export const metadata: Metadata = {
   description: "Manage your notes efficiently",
 };
 
+// ✅ Правильний тип: тільки children
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
@@ -32,6 +32,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <main>{children}</main>
             <Footer />
           </div>
+
+          {/* Модалки будуть рендеритись сюди через createPortal */}
           <div id="modal-root" />
         </TanStackProvider>
       </body>
