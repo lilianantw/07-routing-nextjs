@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import css from "@/components/TagsMenu/TagsMenu.module.css"; // Исправленный импорт
+import css from "@/components/TagsMenu/TagsMenu.module.css";
 
 const tags = [
   { name: "All", slug: "All" },

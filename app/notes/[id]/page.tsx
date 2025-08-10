@@ -6,6 +6,7 @@ import {
 import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 import { notFound } from "next/navigation";
+import type { Note } from "@/types/note"; // Импорт вашего интерфейса Note
 
 export default async function NoteDetailsPage({
   params,
@@ -29,8 +30,8 @@ export default async function NoteDetailsPage({
       queryFn: () => fetchNoteById(id), // Выполняем реальный запрос
     });
 
-    // Получаем данные для проверки (опционально, для валидации)
-    const note = await queryClient.getQueryData(["note", id]);
+    // Получаем данные для проверки с явной типизацией
+    const note = queryClient.getQueryData(["note", id]) as Note | undefined;
     if (!note || !note.id) {
       notFound();
     }
