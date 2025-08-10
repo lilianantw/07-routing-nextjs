@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 // Кастомный тип для пропсов макета
 interface LayoutProps extends React.PropsWithChildren {
-  modal?: ReactNode; // Опциональное модальное окно
+  modal: ReactNode; // Сделали modal обязательным
 }
 
 export default function RootLayout({ children, modal }: LayoutProps) {
