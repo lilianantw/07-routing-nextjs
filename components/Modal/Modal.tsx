@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { createPortal } from "react-dom";
+import { useEffect } from "react";
 import css from "./Modal.module.css";
 
-// Інтерфейс пропсів
 interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
 }
 
-// Модальне вікно
-const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
-  // Обробка Escape
+const Modal = ({ onClose, children }: ModalProps) => {
+  // Закрытие по Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -21,21 +18,22 @@ const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  // Обробка кліку по бекдропу
+  // Закрытие по бекдропу
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
 
-  return createPortal(
+  return (
     <div
       className={css.backdrop}
       role="dialog"
       aria-modal="true"
       onClick={handleBackdropClick}
     >
-      <div className={css.modal}>{children}</div>
-    </div>,
-    document.getElementById("modal-root") as HTMLElement
+      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+        {children}
+      </div>
+    </div>
   );
 };
 

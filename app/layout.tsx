@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { ReactNode } from "react";
 import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -21,8 +22,13 @@ export const metadata: Metadata = {
   description: "Manage your notes efficiently",
 };
 
-// ✅ Правильний тип: тільки children
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal?: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -33,8 +39,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Footer />
           </div>
 
-          {/* Модалки будуть рендеритись сюди через createPortal */}
-          <div id="modal-root" />
+          {/* Параллельный роут: @modal */}
+          {modal}
+
+          {/* Больше не нужен, если используешь @modal */}
+          {/* <div id="modal-root" /> */}
         </TanStackProvider>
       </body>
     </html>
