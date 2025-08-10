@@ -23,24 +23,23 @@ export default async function NoteDetailsPage({
   const queryClient = new QueryClient();
 
   try {
-    // Загружаем заметку по id
-    const note = await fetchNoteById(id);
+    // Предварительно загружаем данные на сервере
+    await queryClient.prefetchQuery({
+      queryKey: ["note", id], // Уникальный ключ для заметки
+      queryFn: () => fetchNoteById(id), // Выполняем реальный запрос
+    });
+
+    // Получаем данные для проверки (опционально, для валидации)
+    const note = await queryClient.getQueryData(["note", id]);
     if (!note || !note.id) {
       notFound();
     }
-
-    // Предварительно загружаем данные в TanStack Query
-    await queryClient.prefetchQuery({
-      queryKey: ["note", id],
-      queryFn: () => Promise.resolve(note),
-    });
   } catch (error) {
-    // Обрабатываем ошибку загрузки
     console.error("Failed to fetch note:", error);
     notFound();
   }
 
-  // Рендерим клиентский компонент с предзагруженными данными
+  // Рендерим клиентский компонент с дегидратированным состоянием
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <NoteDetailsClient noteId={id} />

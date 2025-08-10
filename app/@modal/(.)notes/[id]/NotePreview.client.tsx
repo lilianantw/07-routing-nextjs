@@ -1,7 +1,7 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
 import type { Note } from "@/types/note";
@@ -12,29 +12,52 @@ interface NotePreviewModalProps {
 
 export default function NotePreviewModal({ noteId }: NotePreviewModalProps) {
   const router = useRouter();
-  const [note, setNote] = useState<Note | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchNoteById(noteId)
-      .then((data) => setNote(data))
-      .finally(() => setLoading(false));
-  }, [noteId]);
+  const {
+    data: note,
+    isLoading,
+    error,
+  } = useQuery<Note, Error>({
+    queryKey: ["notePreview", noteId], // Уникальный ключ для запроса
+    queryFn: () => fetchNoteById(noteId), // Функция получения данных
+    refetchOnMount: true, // Повторный фетч при монтировании
+    staleTime: 5000, // Данные считаются свежими 5 секунд
+  });
 
   const closeModal = () => router.back();
 
-  if (loading) return null;
+  if (isLoading)
+    return (
+      <Modal onClose={closeModal}>
+        <div>Загрузка...</div>
+      </Modal>
+    );
+  if (error)
+    return (
+      <Modal onClose={closeModal}>
+        <div>Ошибка: {error.message}</div>
+      </Modal>
+    );
+  if (!note)
+    return (
+      <Modal onClose={closeModal}>
+        <div>Заметка не найдена</div>
+      </Modal>
+    );
 
   return (
     <Modal onClose={closeModal}>
-      {note ? (
-        <>
-          <h2>{note.title}</h2>
-          <p>{note.content}</p>
-        </>
-      ) : (
-        <p>Note not found</p>
-      )}
+      <div>
+        <h2>{note.title}</h2>
+        <p>{note.content}</p>
+        <p>
+          <strong>Тег:</strong> {note.tag}
+        </p>
+        <p>
+          <strong>Дата создания:</strong>{" "}
+          {new Date(note.createdAt).toLocaleDateString()}
+        </p>
+      </div>
     </Modal>
   );
 }
