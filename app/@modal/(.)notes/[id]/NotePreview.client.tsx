@@ -6,11 +6,11 @@ import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
 import type { Note } from "@/types/note";
 
-interface NotePreviewClientProps {
+interface NotePreviewModalProps {
   noteId: string;
 }
 
-export default function NotePreviewClient({ noteId }: NotePreviewClientProps) {
+export default function NotePreviewModal({ noteId }: NotePreviewModalProps) {
   const router = useRouter();
   const [note, setNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
