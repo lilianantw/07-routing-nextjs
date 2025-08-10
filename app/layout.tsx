@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { ReactNode } from "react";
 import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -7,6 +6,7 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import "./globals.css";
 
+// Настройка шрифтов
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,18 +17,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Метаданные
 export const metadata: Metadata = {
   title: "NoteHub",
   description: "Manage your notes efficiently",
 };
 
-export default function RootLayout({
-  children,
-  modal,
-}: {
-  children: React.ReactNode;
-  modal?: React.ReactNode;
-}) {
+// Кастомный тип для пропсов макета
+interface LayoutProps extends React.PropsWithChildren {
+  modal?: ReactNode; // Опциональное модальное окно
+}
+
+export default function RootLayout({ children, modal }: LayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -39,11 +39,9 @@ export default function RootLayout({
             <Footer />
           </div>
 
-          {/* Параллельный роут: @modal */}
           {modal}
 
-          {/* Больше не нужен, если используешь @modal */}
-          {/* <div id="modal-root" /> */}
+          <div id="modal-root" />
         </TanStackProvider>
       </body>
     </html>
