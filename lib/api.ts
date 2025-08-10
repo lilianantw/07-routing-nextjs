@@ -36,33 +36,51 @@ export async function fetchNotes({
   search?: string;
   tag?: string;
 }): Promise<FetchNotesResponse> {
-  const params: Record<string, any> = { page, search };
+  try {
+    const params: Record<string, any> = { page, search };
 
-  // Передаємо тег тільки якщо він заданий і не "all"
-  if (tag && tag.toLowerCase() !== "all") {
-    params.tag = tag;
+    // Передаємо тег тільки якщо він заданий і не "all"
+    if (tag && tag.toLowerCase() !== "all") {
+      params.tag = tag;
+    }
+
+    const response = await api.get<FetchNotesResponse>("/notes", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
   }
-
-  const response = await api.get<FetchNotesResponse>("/notes", {
-    params,
-  });
-  return response.data;
 }
 
 // Створити нову нотатку
 export async function createNote(payload: CreateNoteData): Promise<Note> {
-  const response = await api.post<Note>("/notes", payload);
-  return response.data;
+  try {
+    const response = await api.post<Note>("/notes", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating note:", error);
+    throw error;
+  }
 }
 
 // Видалити нотатку за ID
 export async function deleteNote(id: string): Promise<Note> {
-  const response = await api.delete<Note>(`/notes/${id}`);
-  return response.data;
+  try {
+    const response = await api.delete<Note>(`/notes/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    throw error;
+  }
 }
 
 // Отримати одну нотатку за ID
 export async function fetchNoteById(id: string): Promise<Note> {
-  const response = await api.get<Note>(`/notes/${id}`);
-  return response.data;
+  try {
+    const response = await api.get<Note>(`/notes/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching note by ID:", error);
+    throw error;
+  }
 }

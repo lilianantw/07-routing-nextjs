@@ -7,11 +7,15 @@ import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 import { notFound } from "next/navigation";
 
-export default async function NoteDetailsPage(props: {
+export default async function NoteDetailsPage({
+  params,
+}: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await props.params;
+  // Разворачиваем Promise для получения id
+  const { id } = await params;
 
+  // Проверяем, существует ли id
   if (!id) {
     notFound();
   }
@@ -19,22 +23,27 @@ export default async function NoteDetailsPage(props: {
   const queryClient = new QueryClient();
 
   try {
-    const note = await fetchNoteById(id); // передаем строку
+    // Загружаем заметку по id
+    const note = await fetchNoteById(id);
     if (!note || !note.id) {
       notFound();
     }
 
+    // Предварительно загружаем данные в TanStack Query
     await queryClient.prefetchQuery({
       queryKey: ["note", id],
       queryFn: () => Promise.resolve(note),
     });
-  } catch {
+  } catch (error) {
+    // Обрабатываем ошибку загрузки
+    console.error("Failed to fetch note:", error);
     notFound();
   }
 
+  // Рендерим клиентский компонент с предзагруженными данными
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient noteId={id} /> {/* передаем строку */}
+      <NoteDetailsClient noteId={id} />
     </HydrationBoundary>
   );
 }

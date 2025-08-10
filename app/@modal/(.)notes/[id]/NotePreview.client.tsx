@@ -1,50 +1,40 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Modal from "@/components/Modal/Modal";
-import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
-import Loader from "@/components/Loader/Loader";
-import css from "./NotePreview.module.css";
-import { Note } from "@/types/note";
+import type { Note } from "@/types/note";
 
-interface NotePreviewProps {
-  id: string;
+interface NotePreviewClientProps {
+  noteId: string;
 }
 
-export default function NotePreview({ id }: NotePreviewProps) {
+export default function NotePreviewClient({ noteId }: NotePreviewClientProps) {
   const router = useRouter();
+  const [note, setNote] = useState<Note | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const { data: note, isLoading } = useQuery<Note>({
-    queryKey: ["note", id],
-    queryFn: () => fetchNoteById(id),
-  });
+  useEffect(() => {
+    fetchNoteById(noteId)
+      .then((data) => setNote(data))
+      .finally(() => setLoading(false));
+  }, [noteId]);
 
-  const handleClose = () => {
-    router.back();
-  };
+  const closeModal = () => router.back();
 
-  if (isLoading) return <Loader />;
-  if (!note) return null;
+  if (loading) return null;
 
   return (
-    <Modal onClose={handleClose}>
-      <div className={css.preview}>
-        <div className={css.header}>
-          <h2 className={css.title}>{note.title}</h2>
-        </div>
-        <div className={css.body}>
-          <p className={css.content}>{note.content}</p>
-          <p className={css.date}>
-            {new Date(note.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          {note.tag && <span className={css.tag}>{note.tag}</span>}
-        </div>
-      </div>
+    <Modal onClose={closeModal}>
+      {note ? (
+        <>
+          <h2>{note.title}</h2>
+          <p>{note.content}</p>
+        </>
+      ) : (
+        <p>Note not found</p>
+      )}
     </Modal>
   );
 }

@@ -1,5 +1,4 @@
-// app/@modal/(.)notes/[id]/page.tsx
-"use client"; // чтобы использовать useRouter
+"use client"; // для использования useRouter и хуков
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

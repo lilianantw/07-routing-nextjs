@@ -27,6 +27,10 @@ export default function NoteList({ notes }: NoteListProps) {
     }
   };
 
+  if (!notes || notes.length === 0) {
+    return <p className={css.empty}>No notes available.</p>;
+  }
+
   return (
     <ul className={css.list}>
       {notes.map((note) => (
@@ -37,7 +41,6 @@ export default function NoteList({ notes }: NoteListProps) {
             {note.content.length > 120 ? "…" : ""}
           </p>
           <div className={css.footer}>
-            {/* tag завжди показуємо */}
             <span className={css.tag}>{note.tag}</span>
             <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
               <Link href={`/notes/${note.id}`} className={css.link}>
