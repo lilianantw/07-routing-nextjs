@@ -20,7 +20,7 @@ export default function NotePreviewModal({ noteId }: NotePreviewModalProps) {
   } = useQuery<Note, Error>({
     queryKey: ["notePreview", noteId], // Уникальный ключ для запроса
     queryFn: () => fetchNoteById(noteId), // Функция получения данных
-    refetchOnMount: true, // Повторный фетч при монтировании
+    refetchOnMount: false, // Отключение повторного фетча при монтировании
     staleTime: 5000, // Данные считаются свежими 5 секунд
   });
 
