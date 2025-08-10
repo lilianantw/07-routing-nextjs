@@ -1,3 +1,4 @@
+// app/notes/filter/layout.tsx
 import "./LayoutNotes.module.css";
 
 export const metadata = {
@@ -16,8 +17,7 @@ export default function FilterLayout({
     <section style={{ display: "flex" }}>
       <aside style={{ width: "200px" }}>{sidebar}</aside>
       <main style={{ flex: 1 }}>{children}</main>
-      {/* Контейнер для модальных окон через портал */}
-      <div id="modal-root"></div>
+      {/* ❌ Удалён <div id="modal-root" /> — он только в корневом layout */}
     </section>
   );
 }
