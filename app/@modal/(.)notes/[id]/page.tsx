@@ -1,40 +1,41 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+// app/@modal/(.)notes/[id]/page.tsx
+"use client"; // чтобы использовать useRouter
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Modal from "@/components/Modal/Modal";
 import { fetchNoteById } from "@/lib/api";
-import NoteDetailsClient from "./NotePreview.client";
-import { notFound } from "next/navigation";
+import type { Note } from "@/types/note";
 
-export default async function NoteDetailsPage(props: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await props.params;
+type Props = {
+  params: { id: string };
+};
 
-  if (!id) {
-    notFound();
-  }
+export default function NotePreview({ params }: Props) {
+  const router = useRouter();
+  const [note, setNote] = useState<Note | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const queryClient = new QueryClient();
+  useEffect(() => {
+    fetchNoteById(params.id)
+      .then((data) => setNote(data))
+      .finally(() => setLoading(false));
+  }, [params.id]);
 
-  try {
-    const note = await fetchNoteById(id); // передаем строку
-    if (!note || !note.id) {
-      notFound();
-    }
+  const closeModal = () => router.back();
 
-    await queryClient.prefetchQuery({
-      queryKey: ["note", id],
-      queryFn: () => Promise.resolve(note),
-    });
-  } catch {
-    notFound();
-  }
+  if (loading) return null;
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient noteId={id} /> {/* передаем строку */}
-    </HydrationBoundary>
+    <Modal onClose={closeModal}>
+      {note ? (
+        <>
+          <h2>{note.title}</h2>
+          <p>{note.content}</p>
+        </>
+      ) : (
+        <p>Note not found</p>
+      )}
+    </Modal>
   );
 }

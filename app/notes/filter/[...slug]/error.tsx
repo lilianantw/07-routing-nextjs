@@ -1,18 +1,16 @@
 "use client";
 
-import Link from "next/link";
+type Props = {
+  error: Error;
+  reset: () => void;
+};
 
-export default function Error() {
+export default function Error({ error, reset }: Props) {
   return (
-    <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>Что-то пошло не так.</h1>
-      <p>Не удалось загрузить заметки.</p>
-      <Link
-        href="/notes/filter/All"
-        style={{ color: "#0070f3", textDecoration: "underline" }}
-      >
-        ← Вернуться к списку заметок
-      </Link>
+    <div>
+      <h2>Помилка при завантаженні</h2>
+      <p>Could not fetch the list of notes. {error.message}</p>
+      <button onClick={reset}>Спробувати знову</button>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import type { Note } from "@/types/note";
+import Link from "next/link";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNote } from "@/lib/api";
-import { useRouter } from "next/navigation";
 import css from "./NoteList.module.css";
 
 interface NoteListProps {
@@ -12,7 +12,6 @@ interface NoteListProps {
 
 export default function NoteList({ notes }: NoteListProps) {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const { mutate: removeNote, isPending } = useMutation({
     mutationFn: deleteNote,
@@ -28,10 +27,6 @@ export default function NoteList({ notes }: NoteListProps) {
     }
   };
 
-  const openModal = (id: string) => {
-    router.push(`/notes/${id}`);
-  };
-
   return (
     <ul className={css.list}>
       {notes.map((note) => (
@@ -42,15 +37,12 @@ export default function NoteList({ notes }: NoteListProps) {
             {note.content.length > 120 ? "…" : ""}
           </p>
           <div className={css.footer}>
+            {/* tag завжди показуємо */}
             <span className={css.tag}>{note.tag}</span>
             <div style={{ display: "flex", gap: "8px", marginLeft: "auto" }}>
-              <button
-                type="button"
-                className={css.link}
-                onClick={() => openModal(note.id)}
-              >
+              <Link href={`/notes/${note.id}`} className={css.link}>
                 View details
-              </button>
+              </Link>
               <button
                 className={css.button}
                 onClick={(e) => handleDelete(note.id, e)}

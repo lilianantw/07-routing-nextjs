@@ -1,5 +1,3 @@
-// lib/api.ts
-
 import axios from "axios";
 import type {
   Note,
@@ -22,22 +20,31 @@ export interface CreateNotePayload {
 }
 
 const api = axios.create({
-  baseURL: "https://notehub-public.goit.study/api", // ✅ Виправлено: видалено пробіли
+  baseURL: "https://notehub-public.goit.study/api",
   headers: {
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,
   },
 });
 
-// Отримати всі нотатки (із пагінацією та фільтром за тегом)
+// Отримати всі нотатки (із пагінацією, пошуком і фільтрацією за тегом)
 export async function fetchNotes({
   page = 1,
   search = "",
+  tag,
 }: {
   page?: number;
   search?: string;
+  tag?: string;
 }): Promise<FetchNotesResponse> {
+  const params: Record<string, any> = { page, search };
+
+  // Передаємо тег тільки якщо він заданий і не "all"
+  if (tag && tag.toLowerCase() !== "all") {
+    params.tag = tag;
+  }
+
   const response = await api.get<FetchNotesResponse>("/notes", {
-    params: { page, search },
+    params,
   });
   return response.data;
 }

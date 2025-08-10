@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
-import { fetchNotes, FetchNotesResponse } from "@/lib/api";
+import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
@@ -15,30 +15,29 @@ import { Note } from "@/types/note";
 interface NotesClientProps {
   initialNotes: Note[];
   initialTotalPages: number;
-  initialTag?: string;
+  selectedTag?: string;
 }
 
 export default function NotesClient({
   initialNotes,
   initialTotalPages,
-  initialTag = "",
+  selectedTag,
 }: NotesClientProps) {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState(initialTag);
+  const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const queryOptions: UseQueryOptions<FetchNotesResponse, Error> = {
-    queryKey: ["notes", page, debouncedSearch],
-    queryFn: () => fetchNotes({ page, tag: debouncedSearch }),
-    keepPreviousData: true,
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["notes", page, debouncedSearch, selectedTag],
+    queryFn: () =>
+      fetchNotes({ page, search: debouncedSearch, tag: selectedTag }),
+    placeholderData: keepPreviousData,
     initialData: {
       notes: initialNotes,
       totalPages: initialTotalPages,
     },
-  };
-
-  const { data, isLoading, error } = useQuery(queryOptions);
+  });
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -46,7 +45,8 @@ export default function NotesClient({
   };
 
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setPage(selected + 1);
+    const newPage = selected + 1;
+    setPage(newPage);
   };
 
   const openModal = () => setIsModalOpen(true);

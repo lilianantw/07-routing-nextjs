@@ -1,5 +1,3 @@
-// app/@modal/(.)notes/[id]/NotePreview.tsx
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -8,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import Loader from "@/components/Loader/Loader";
 import css from "./NotePreview.module.css";
+import { Note } from "@/types/note";
 
 interface NotePreviewProps {
   id: string;
@@ -16,11 +15,7 @@ interface NotePreviewProps {
 export default function NotePreview({ id }: NotePreviewProps) {
   const router = useRouter();
 
-  const {
-    data: note,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: note, isLoading } = useQuery<Note>({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
   });
@@ -29,43 +24,16 @@ export default function NotePreview({ id }: NotePreviewProps) {
     router.back();
   };
 
-  if (isLoading) {
-    return (
-      <Modal onClose={handleClose}>
-        <div className={css.container}>
-          <div className={css.item}>
-            <Loader />
-          </div>
-        </div>
-      </Modal>
-    );
-  }
-
-  if (error || !note) {
-    return (
-      <Modal onClose={handleClose}>
-        <div className={css.container}>
-          <div className={css.item}>
-            <p>Failed to load note.</p>
-            <button onClick={handleClose} className={css.backBtn}>
-              Back
-            </button>
-          </div>
-        </div>
-      </Modal>
-    );
-  }
+  if (isLoading) return <Loader />;
+  if (!note) return null;
 
   return (
     <Modal onClose={handleClose}>
-      <div className={css.container}>
-        <div className={css.item}>
-          <div className={css.header}>
-            <h2>{note.title}</h2>
-            <button onClick={handleClose} className={css.backBtn}>
-              Back
-            </button>
-          </div>
+      <div className={css.preview}>
+        <div className={css.header}>
+          <h2 className={css.title}>{note.title}</h2>
+        </div>
+        <div className={css.body}>
           <p className={css.content}>{note.content}</p>
           <p className={css.date}>
             {new Date(note.createdAt).toLocaleDateString("en-US", {

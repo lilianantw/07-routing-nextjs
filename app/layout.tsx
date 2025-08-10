@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
@@ -22,10 +23,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
+  modal, // Добавили modal
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
+  modal?: React.ReactNode; // modal может быть не обязательно
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
@@ -36,6 +37,8 @@ export default function RootLayout({
             <main>{children}</main>
             <Footer />
           </div>
+
+          {modal}
 
           <div id="modal-root" />
         </TanStackProvider>
