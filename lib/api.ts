@@ -37,7 +37,11 @@ export async function fetchNotes({
   tag?: string;
 }): Promise<FetchNotesResponse> {
   try {
-    const params: Record<string, any> = { page, search };
+    // Заменяем Record<string, any> на более конкретный тип
+    const params: Record<string, string | number | undefined> = {
+      page,
+      search,
+    };
 
     // Передаємо тег тільки якщо він заданий і не "all"
     if (tag && tag.toLowerCase() !== "all") {
